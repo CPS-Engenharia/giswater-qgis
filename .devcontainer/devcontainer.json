@@ -1,0 +1,61 @@
+{
+  "name": "Giswater QGIS 4.0.3 + PostgreSQL 17",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "qgis-dev",
+  "workspaceFolder": "/workspace",
+  "containerEnv": {
+    "QT_QPA_PLATFORM": "xcb"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git-lfs:1": {
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "ms-python.flake8",
+        "ms-azuretools.vscode-docker",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker",
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-pg"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/bin/python3",
+        "python.linting.enabled": true,
+        "python.linting.flake8Enabled": true,
+        "python.formatting.provider": "black",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": "explicit"
+        },
+        "files.eol": "\n",
+        "files.exclude": {
+          "**/__pycache__": true,
+          "**/*.pyc": true
+        }
+      }
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "portsAttributes": {
+    "5433": {
+      "label": "PostgreSQL 17 (host 5433 -> container 5432)",
+      "onAutoForward": "notify"
+    },
+    "5901": {
+      "label": "VNC Server (QGIS GUI)",
+      "onAutoForward": "silent"
+    },
+    "6080": {
+      "label": "noVNC (Browser VNC)",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postAttachCommand": "git config --global --add safe.directory /workspace; git -C /workspace submodule update --init --recursive",
+  "remoteUser": "vscode"
+}

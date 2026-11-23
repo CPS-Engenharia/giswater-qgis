@@ -1,0 +1,51 @@
+services:
+  qgis-dev:
+    build:
+      # The Dockerfile copies nothing from the build context, so keep the context
+      # local to .devcontainer/ instead of sending the whole ~400 MB repository.
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USERNAME: vscode
+        USER_UID: 1000
+        USER_GID: 1000
+    volumes:
+      - ..:/workspace:cached
+      - qgis-data:/home/vscode/.local/share/QGIS
+      - qgis-config:/home/vscode/.config/QGIS
+    command: sleep infinity
+    environment:
+      - DISPLAY=:1
+      - VNC_RESOLUTION=1920x1080
+      - VNC_PASSWORD=giswater
+      - POSTGRES_HOST=localhost
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=giswater
+      - POSTGRES_USER=giswater
+      - POSTGRES_PASSWORD=giswater
+    depends_on:
+      - postgres
+    network_mode: service:postgres
+
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    environment:
+      POSTGRES_USER: giswater
+      POSTGRES_PASSWORD: giswater
+      POSTGRES_DB: giswater
+    shm_size: 256mb
+    ports:
+      - "5901:5901"
+      - "6080:6080"
+      - "5433:5432"
+
+volumes:
+  postgres-data:
+  qgis-data:
+  qgis-config:

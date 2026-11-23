@@ -1,3 +1,5 @@
 # Shell scripts must use LF (WSL/Linux shebang breaks on CRLF: env: 'bash\r')
 *.sh text eol=lf
+# Dev container definitions are consumed by Linux Docker; keep them LF even with core.autocrlf=true
+.devcontainer/** text eol=lf
 dbmodel/docker/test-runner/pgdg-ACCC4CF8.asc text eol=lf
