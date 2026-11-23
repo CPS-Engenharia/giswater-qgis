@@ -47,6 +47,7 @@ install_qpip() {
     qgis-plugin-manager init
     qgis-plugin-manager update
     qgis-plugin-manager install qpip
+    qgis-plugin-manager install "Plugin Reloader"
     echo "  QGIS plugins installed"
     echo ""
 }
@@ -75,6 +76,7 @@ savePassword=true
 [PythonPlugins]
 a00_qpip=true
 giswater=true
+plugin_reloader=true
 
 [QPIP]
 check_on_startup=yes

@@ -24,6 +24,15 @@ viewer to `localhost:5901`. Password: `giswater`.
 
 `stop-vnc` shuts both the VNC server and the noVNC proxy down.
 
+## Pre-installed QGIS Plugins
+
+The dev container pre-installs the following Python plugins via `qgis-plugin-manager`
+(see `.devcontainer/post-create.sh`), so they are available and enabled on first boot:
+
+- **QPIP** — manages Giswater's own Python dependencies
+- **Plugin Reloader** — reload the Giswater plugin from the Plugins toolbar without
+  restarting QGIS, useful while iterating on plugin code
+
 ## Using PyQGIS
 
 ```bash
