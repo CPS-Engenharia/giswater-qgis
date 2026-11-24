@@ -50,6 +50,8 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
+RUN pip3 install --no-cache-dir --ignore-installed --break-system-packages pgadmin4    
+
 RUN pip3 install --no-cache-dir --ignore-installed --break-system-packages \
     black \
     flake8 \
@@ -60,28 +62,28 @@ RUN pip3 install --no-cache-dir --ignore-installed --break-system-packages \
     qgis-plugin-manager
 
 RUN if getent group "$USER_GID" >/dev/null 2>&1; then \
-        GROUP_NAME="$(getent group "$USER_GID" | cut -d: -f1)"; \
+    GROUP_NAME="$(getent group "$USER_GID" | cut -d: -f1)"; \
     elif getent group "$USERNAME" >/dev/null 2>&1; then \
-        GROUP_NAME="$USERNAME"; \
+    GROUP_NAME="$USERNAME"; \
     else \
-        groupadd --gid "$USER_GID" "$USERNAME"; \
-        GROUP_NAME="$USERNAME"; \
+    groupadd --gid "$USER_GID" "$USERNAME"; \
+    GROUP_NAME="$USERNAME"; \
     fi \
     && if id -u "$USERNAME" >/dev/null 2>&1; then \
-        usermod -g "$GROUP_NAME" "$USERNAME"; \
-        if [ "$(id -u "$USERNAME")" != "$USER_UID" ]; then \
-            usermod -u "$USER_UID" "$USERNAME"; \
-        fi; \
+    usermod -g "$GROUP_NAME" "$USERNAME"; \
+    if [ "$(id -u "$USERNAME")" != "$USER_UID" ]; then \
+    usermod -u "$USER_UID" "$USERNAME"; \
+    fi; \
     elif getent passwd "$USER_UID" >/dev/null 2>&1; then \
-        EXISTING_USER="$(getent passwd "$USER_UID" | cut -d: -f1)"; \
-        usermod -g "$GROUP_NAME" "$EXISTING_USER"; \
-        usermod -l "$USERNAME" "$EXISTING_USER"; \
+    EXISTING_USER="$(getent passwd "$USER_UID" | cut -d: -f1)"; \
+    usermod -g "$GROUP_NAME" "$EXISTING_USER"; \
+    usermod -l "$USERNAME" "$EXISTING_USER"; \
     else \
-        useradd --uid "$USER_UID" --gid "$GROUP_NAME" -m "$USERNAME"; \
+    useradd --uid "$USER_UID" --gid "$GROUP_NAME" -m "$USERNAME"; \
     fi \
     && USER_HOME="$(getent passwd "$USERNAME" | cut -d: -f6)" \
     && if [ "$USER_HOME" != "/home/$USERNAME" ]; then \
-        usermod -d "/home/$USERNAME" -m "$USERNAME"; \
+    usermod -d "/home/$USERNAME" -m "$USERNAME"; \
     fi \
     && echo "$USERNAME" ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME

@@ -88,6 +88,34 @@ EOF
 
 seed_qgis_ini
 
+configure_pgadmin() {
+    local pkg_dir
+    pkg_dir="$(python3 -c 'import pgadmin4, os; print(os.path.dirname(pgadmin4.__file__))' 2>/dev/null)"
+
+    if [ -z "$pkg_dir" ]; then
+        echo "  pgAdmin4 not found, skipping configuration"
+        echo ""
+        return
+    fi
+
+    cat > "$pkg_dir/config_local.py" <<'EOF'
+import os
+DATA_DIR = os.path.realpath(os.path.expanduser(u'~/.pgadmin/'))
+LOG_FILE = os.path.join(DATA_DIR, 'pgadmin4.log')
+SQLITE_PATH = os.path.join(DATA_DIR, 'pgadmin4.db')
+SESSION_DB_PATH = os.path.join(DATA_DIR, 'sessions')
+STORAGE_DIR = os.path.join(DATA_DIR, 'storage')
+SERVER_MODE = False
+DEFAULT_SERVER = '0.0.0.0'
+DEFAULT_SERVER_PORT = 5050
+EOF
+
+    echo "$pkg_dir" > ~/.pgadmin4_path
+    echo "  pgAdmin4 configured — run: python3 \$(cat ~/.pgadmin4_path)/pgAdmin4.py &"
+    echo ""
+}
+
+configure_pgadmin
 # setup_gui_shortcuts() {
 #     local desktop_dir="$HOME/Desktop"
 #     local helper_dir="$HOME/.local/bin"

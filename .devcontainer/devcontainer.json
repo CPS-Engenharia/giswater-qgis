@@ -54,6 +54,10 @@
     "6080": {
       "label": "noVNC (Browser VNC)",
       "onAutoForward": "openBrowser"
+    },
+    "5050": {
+      "label": "pgAdmin4",
+      "onAutoForward": "openBrowser"
     }
   },
   "postAttachCommand": "git config --global --add safe.directory /workspace; git -C /workspace submodule update --init --recursive",
