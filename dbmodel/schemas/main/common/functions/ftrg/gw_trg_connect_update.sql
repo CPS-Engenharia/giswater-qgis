@@ -76,6 +76,27 @@ BEGIN
 			END LOOP;
 		END IF;
 
+		-- redraw the link's arc-side point when the connec's arc_id changes (fixes link not updating when using "Get new arc id")
+		IF NEW.arc_id IS DISTINCT FROM OLD.arc_id AND v_arc.arc_id IS NOT NULL THEN
+
+			--Select links with start (feature) on the updated connec: arc side is the last point
+			querystring := 'SELECT * FROM ve_link WHERE feature_id = ' || quote_literal(NEW.connec_id) || ' AND feature_type=''CONNEC''';
+			FOR linkrec IN EXECUTE querystring
+			LOOP
+				EXECUTE 'UPDATE link SET the_geom = ST_SetPoint($1, -1, ST_ClosestPoint($2, ST_EndPoint($1))) WHERE link_id = ' || quote_literal(linkrec."link_id")
+				USING linkrec.the_geom, v_arc.the_geom;
+			END LOOP;
+
+			--Select links with end (exit) on the updated connec: arc side is the first point
+			querystring := 'SELECT * FROM ve_link WHERE exit_id = ' || quote_literal(NEW.connec_id) || ' AND exit_type=''CONNEC''';
+			FOR linkrec IN EXECUTE querystring
+			LOOP
+				EXECUTE 'UPDATE link SET the_geom = ST_SetPoint($1, 0, ST_ClosestPoint($2, ST_StartPoint($1))) WHERE link_id = ' || quote_literal(linkrec."link_id")
+				USING linkrec.the_geom, v_arc.the_geom;
+			END LOOP;
+
+		END IF;
+
 		-- update the rest of the feature parameters for state = 1 connects
 		FOR v_link IN SELECT * FROM ve_link WHERE (exit_type='CONNEC' AND exit_id=OLD.connec_id) AND state = 1
 		LOOP
