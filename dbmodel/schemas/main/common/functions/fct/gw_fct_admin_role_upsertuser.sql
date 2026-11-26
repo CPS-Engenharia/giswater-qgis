@@ -174,7 +174,7 @@ BEGIN
 
 				--insert values for the new user into basic selectors
 				EXECUTE 'INSERT INTO '||rec_schema||'.selector_state (state_id, cur_user) 
-				VALUES (1,'''||v_user_id||''') ON CONFLICT (state_id,cur_user) DO NOTHING';
+				SELECT id, '''||v_user_id||''' FROM '||rec_schema||'.value_state ON CONFLICT (state_id,cur_user) DO NOTHING';
 
 				EXECUTE 'INSERT INTO '||rec_schema||'.selector_expl (expl_id, cur_user) 
 				SELECT expl_id, '''||v_user_id||''' FROM '||rec_schema||'.config_user_x_expl 
@@ -188,7 +188,7 @@ BEGIN
 			ELSE
 				--insert values for the new user into basic selectors
 				EXECUTE 'INSERT INTO '||rec_schema||'.selector_state (state_id, cur_user) 
-				VALUES (1,'''||v_user_id||''') ON CONFLICT (state_id,cur_user) DO NOTHING';
+				SELECT id, '''||v_user_id||''' FROM '||rec_schema||'.value_state ON CONFLICT (state_id,cur_user) DO NOTHING';
 	
 				EXECUTE 'INSERT INTO '||rec_schema||'.selector_expl (expl_id, cur_user) 
 				SELECT expl_id, '''||v_user_id||''' FROM '||rec_schema||'.exploitation 
